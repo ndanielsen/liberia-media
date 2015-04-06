@@ -1,5 +1,9 @@
-# Liberia Geospatial and Media Sector Data Collection
-_Disclaimer: I have only surface level knowledge of the history of Liberia and it's people. It was for this reason that I chose this project. I believe that I am mostly unbiased by previous knowledge or beliefs and can place an emphasis on the data analysis._
+# Liberia: Analysis of Media Coverage by Development Indicators During Times of Ebola
+_Disclaimer: I have only surface level knowledge of the history of Liberia and its people. It was for this reason that I chose this project. I believe that I am mostly unbiased by previous knowledge or beliefs and can place an emphasis on the data analysis. Obviously I am an outsider and have never visited Liberia. I am familiar with Guinea, Cote D'Ivoire, Senegal, Mali and other areas of West Africa._
+
+
+
+![Liberia Map](http://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Topographic_map_of_Liberia-en.svg/650px-Topographic_map_of_Liberia-en.svg.png)
 
 
 ###Research Question 
@@ -10,11 +14,12 @@ I hypothesize that timely and accurate media coverage of significant events in L
 
 
 ###Strategy 
-Since the quantiy of Ebola media coverage has been extensive, I hope to test my hypothesis by contrasting Ebola media coverage content with geospatial and other development indicators.
+Since the quantiy of Ebola media coverage has been extensive, I hope to test my hypothesis by contrasting Ebola media coverage content with geographical, demographic, other development indicators.
 
-## Geospatial Data
-I'm collecting as much data as I can on Liberia at the county, municipal, and village level if possible.
+#Data
 
+### Liberia Demographic and Development Data
+I'm collecting as much data as I can on Liberia at the county, municipal, and village level if possible. I think that it will be extremely hard to find much data below the county level. 
 
 [USAID Open Data on Liberia](http://results.usaid.gov/liberia#fy2013)
 
@@ -26,6 +31,65 @@ I'm collecting as much data as I can on Liberia at the county, municipal, and vi
 _The Demographic and Health Surveys (DHS) Program has collected, analyzed, and disseminated accurate and representative data on population, health, HIV, and nutrition through more than 300 surveys in over 90 countries._
 
 
-## Media Content 
+### Liberia Media Content 
 
-Preferably from Liberia Owned and Operated Media Outlets
+I am targetting Liberia located Media Outlets that have a signficant internet publications. Most of the sites in the links below that I have looked appear to be easily to scrape. 
+
+[Online News Paper Links](http://www.abyznewslinks.com/liber.htm)
+
+[Wikipedia Media Page](http://en.wikipedia.org/wiki/Category:Newspapers_published_in_Liberia)
+
+I have already collected about 15,000 media stories in a raw format but I could collect more.
+
+
+### Liberia Ebola Data
+
+[Github of Caitlin Rivers](https://github.com/cmrivers/ebola/tree/master/liberia_data)
+_Pretty solid collection and analysis of Ebola related data by the county level._
+
+[Sub-national time series data on Ebola cases and deaths in Guinea, Liberia, Sierra Leone, Nigeria, Senegal and Mali since March 2014](https://data.hdx.rwlabs.org/dataset/rowca-ebola-cases)
+_Compiled data of Ebola cases and deaths that is regularly updated_
+
+
+#Project Plans (Still Under Development)
+
+###What is my Acceptance criteria?
+
+Model with 80% accuracy?
+
+
+###What are actionable outcomes from the anaylsis?
+
+Identify publications or authors that have less bias, that write more about specific areas or categories of areas.
+
+Identify rural/ urban biases.
+
+###Success factors
+
+*What do I consider a successful project to consist of?*
+
+####Open Source Tools for Reproducing and Improving My Work in Other Countries and Contexts
+
+All raw data cleaned into easily machine readable formats and shared for analysis by others.
+
+Python collection and analysis tools written in a manner to be easily used again for another country such as Sierra Leon.
+
+####Visualizations
+
+Create map of media coverage in general for a specific period of time.
+
+Create map of Ebola casualties by different time internals.
+
+Create an overlapping map of Ebolas casualties versus media coverage. (Heat map?)
+
+####Model
+
+Create a model of news coverageby county level and determine correlation with DHS data and other indicators.
+
+
+
+
+####Lessons Learned Document
+
+Share what I have learned about West Africa media collection and analysis as a non-media expert. 
+

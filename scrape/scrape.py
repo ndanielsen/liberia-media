@@ -26,41 +26,47 @@ class Collector(object):
 	def __init__(self, name, urlraw):
 		self.name = name.lower().replace(" ", '')
 		self.urlraw = url
-		self.url = requests.get(url)
-		self.status_code = self.url.status_code
-		self.text = self.url.text # unicode
-		self.headers = self.url.headers
-		self.content = self.url.content # string
-		
-		self.date = self.headers['date'].replace(',','').replace(' ','_')
-		
-		self.dirname = 'data/' + self.name + "/"
-		self.log_file = self.name + "_log.json"
-		self.log_path = self.dirname + self.log_file
-
-		self.filename = self.headers['content-length'] + "_" + self.date + ".txt"
-		self.file_path = self.dirname + self.filename 
-
 		self.cache = {}
+
+		self.url = None
+		self.status_code = None
+		self.text = None
+		self.headers = None
+		self.content = None
+		
+		self.date = None
+		
+		self.dirname = None
+		self.log_file = None
+		self.log_path = None
+
+		self.filename = None
+		self.file_path = None
+
+		
 
 	def	initialize(self):
 		
-		self.url = requests.get(url) 
-		self.status_code = self.url.status_code
-		self.text = self.url.text # unicode
-		self.headers = self.url.headers
-		self.content = self.url.content # string
-		
-		self.date = self.headers['date'].replace(',','').replace(' ','_')
-		
-		self.dirname = 'data/' + self.name + "/"
-		self.log_file = self.name + "_log.json"
-		self.log_path = self.dirname + self.log_file
+		try:
 
-		self.filename = self.headers['content-length'] + "_" + self.date + ".txt"
-		self.file_path = self.dirname + self.filename 
+			self.url = requests.get(url) 
+			self.status_code = self.url.status_code
+			self.text = self.url.text # unicode
+			self.headers = self.url.headers
+			self.content = self.url.content # string
+			
+			self.date = self.headers['date'].replace(',','').replace(' ','_')
+			
+			self.dirname = 'data/' + self.name + "/"
+			self.log_file = self.name + "_log.json"
+			self.log_path = self.dirname + self.log_file
 
+			self.filename = self.headers['content-length'] + "_" + self.date + ".txt"
+			self.file_path = self.dirname + self.filename 
 
+		except requests.exceptions.ConnectionError:
+
+			print "ok"
 
 
 	def setup_Dir(self):
@@ -147,7 +153,7 @@ class Collector(object):
 
 	def main(self):
 
-		# self.initialize()
+		self.initialize()
 		self.setup_Dir()
 		self.load_log()
 		self.updatecache()
@@ -166,13 +172,21 @@ if __name__ == "__main__":
 
 	print "Hello"
 
-	base_url = "http://www.liberianobser3ver.com/node/"
+	base_url = "http://www.liberianobs3erver.com/node/"
 
-	node = 99
+	node = [x for x in range(99, 105)]
 
-	url = base_url + str(node)
+	scraper = Collector("liberianobserver", url)
 
-	test = Collector("liberianobserver", url)
 
-	test.main()
+
+	for num in node:
+		url = base_url + str(node)
+		print num
+
+		scraper = Collector("liberianobserver", url)
+
+		scraper.main()
+
+
 

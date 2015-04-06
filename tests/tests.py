@@ -19,10 +19,6 @@ class TestScrape(unittest.TestCase):
 	def test_Confirm_Connection(self):
 		self.assertEquals(self.collector.status_code, 200)
 		
-	def test_Confirm_Init(self):
-		self.assertEquals(self.name, 'httpbin')
-		self.assertIn('httpbin(1)', self.text)
-		self.assertIn('content-type', self.headers.keys())
-		self.assertIn('<title>httpbin(1): HTTP Client Testing Service</title>', self.content)
+
 
 	
