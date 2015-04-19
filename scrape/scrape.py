@@ -6,8 +6,12 @@ Scraping module for Liberia Media Collection
 author: Nathan Danielsen
 email: nathanjdanielsen@gmail.com
 """
-import os
+
+import csv
+import datetime 
 import json
+import os
+import time
 
 import requests
 # from bs4 import BeautifulSoup
@@ -23,59 +27,141 @@ class Collector(object):
 	DEBUG = True
 
 
-	def __init__(self, name, urlraw):
+	def __init__(self, name=None, urlraw=None, sleep=None):
 		self.name = name.lower().replace(" ", '')
-		self.urlraw = url
+		self.urlraw = urlraw
+		self.sleep = float(sleep)
+
 		self.cache = {}
+		self.time = datetime.datetime.fromtimestamp(time.time())
 
-		self.url = None
-		self.status_code = None
-		self.text = None
-		self.headers = None
-		self.content = None
-		
-		self.date = None
-		
-		self.dirname = None
-		self.log_file = None
-		self.log_path = None
-
-		self.filename = None
-		self.file_path = None
-
-		
-
-	def	initialize(self):
-		
 		try:
 
-			self.url = requests.get(url) 
+			# Check log for url			
+			self.check_log()
+
+			self.url = requests.get(urlraw) 
 			self.status_code = self.url.status_code
-			self.text = self.url.text # unicode
-			self.headers = self.url.headers
-			self.content = self.url.content # string
+
+			if DEBUG:
+				print "Waiting ten seconds after request"
+
+			time.sleep(self.sleep) ### Added sleep timer here because easily place to control requests
 			
-			self.date = self.headers['date'].replace(',','').replace(' ','_')
-			
-			self.dirname = 'data/' + self.name + "/"
-			self.log_file = self.name + "_log.json"
-			self.log_path = self.dirname + self.log_file
+			if self.url.status_code != 200:
+				self.url_log()
+	
+			else:	
 
-			self.filename = self.headers['content-length'] + "_" + self.date + ".txt"
-			self.file_path = self.dirname + self.filename 
+				self.main()
 
-		except requests.exceptions.ConnectionError:
+			if DEBUG:
 
-			print "ok"
-
-
-	def setup_Dir(self):
+				print "Main executed at %s" % self.time
 		
+		except requests.exceptions.ConnectionError:
+			self.url = None
+			self.status_code = None
+			self.url_log()
+
+
+			if DEBUG:
+
+				print "ConnectionError Exception Caught"
+
+		except NameError: # if URL already in logger
+
+			pass
+
+	def check_log(self):
+		"""
+		Checks the log file to see if the URL Raw has already been process.
+
+		If processed already, it will continue to the next order
+
+		Otherwise it will process the URL
+		"""
+
+
+
+		filename = "url_logger.csv"
+
+		if not os.path.isfile(filename):
+			with open(filename, "w+") as f:
+				columns = ["url_request", "url_status_code", "name",  "time"]
+				csv_writer = csv.writer(f)
+				csv_writer.writerow(columns)
+				
+
+
+		else:
+			with open(filename, 'r') as f:
+
+				reader = csv.reader(f)
+
+				for row in reader:
+	
+
+
+					if row[0] == self.urlraw:
+						if DEBUG:
+							print "Already scraped"
+						raise NameError("URL has already been scraped")
+					
+				
+
+			# self.urlraw, str(self.status_code)
+
+
+	def url_log(self):
+		"""    """
+		filename = "url_logger.csv"
+		columns = ["url_request", "url_status_code", "name",  "time"]
+		data = [self.urlraw, str(self.status_code), self.name, str(self.time)]
+
+
+
+		with open(filename, 'a+') as f:
+			csv_writer = csv.writer(f)
+			csv_writer.writerow(data)
+				
+
+	#### NEED to write unique HEADER identification class for each site being scrapped			
+
+
+
+
+	def setUp(self):
+
+		self.text = self.url.text # unicode
+		self.headers = self.url.headers
+		self.headers.update({"scrape_time": str(self.time)})
+
+		self.content = self.url.content # string
+		
+		# self.date = self.headers['date'].replace(',','').replace(' ','_') ### update to the time scrapped
+
+		self.date = str(self.time)
+		
+		self.dirname = 'data/' + self.name + "/"
+		self.log_file = self.name + "_log.json"
+		self.log_path = self.dirname + self.log_file
+
+		# self.filename = self.headers['content-length'] + "_" + self.date + ".txt" ### removed to generalize to other media sitess
+
+		self.filename = self.date + ".txt"
+
+		self.file_path = self.dirname + self.filename 
+
+
 		if not os.path.exists(self.dirname):
 			os.makedirs(self.dirname)
 			
 			if DEBUG:
+
 				print "*** %s created" % (self.dirname)
+
+		self.write_file()
 
 
 	def load_log(self):
@@ -109,28 +195,20 @@ class Collector(object):
 		Checks to see if the publication and story has been collected. If false, it will add the publication and story to CACHE.  
 		"""
 		try:
-
-			key = self.headers['link']		#Link is an content specific headers, redirects do not have this
-					
+			key = self.urlraw	#Link is an content specific headers, redirects do not have this
 			if key not in self.cache:
 				self.cache[key] = dict(self.headers)
 				self.write_file()
 
-			if DEBUG:
-				print "Content added"
-
-
+				if DEBUG:
+					print "Content added"
 			else:
 				if DEBUG:
 					print "Content already present"
-
-				pass
-
+				
 		except KeyError:
-
 			key = self.urlraw
 			self.cache[key] = None
-
 			if DEBUG:
 				print "Content does not exist"
 
@@ -153,40 +231,28 @@ class Collector(object):
 
 	def main(self):
 
-		self.initialize()
-		self.setup_Dir()
+
+		self.url_log()
+		self.setUp()
 		self.load_log()
 		self.updatecache()
 		self.write_log()
 		
+
+
 
 		if DEBUG:
 			print "All finished"
 
 
 
-
-
-
 if __name__ == "__main__":
 
-	print "Hello"
-
-	base_url = "http://www.liberianobs3erver.com/node/"
-
-	node = [x for x in range(99, 105)]
-
-	scraper = Collector("liberianobserver", url)
+	Collector(name="liberianobserver", urlraw="http://www.liberianobserver.com/node/102", sleep=5)
 
 
 
-	for num in node:
-		url = base_url + str(node)
-		print num
 
-		scraper = Collector("liberianobserver", url)
-
-		scraper.main()
 
 
 
