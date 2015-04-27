@@ -27,50 +27,58 @@ class Collector(object):
 	DEBUG = True
 
 
-	def __init__(self, name=None, urlraw=None, sleep=None):
+	def __init__(self, name=None, urlraw=None, sleep=0, message="default"):
 		self.name = name.lower().replace(" ", '')
 		self.urlraw = urlraw
 		self.sleep = float(sleep)
-
+		self.message = message
 		self.cache = {}
 		self.time = datetime.datetime.fromtimestamp(time.time())
+		
 
 		try:
-
-			# Check log for url			
 			self.check_log()
-
 			self.url = requests.get(urlraw) 
 			self.status_code = self.url.status_code
 
+			# print len(self.url.headers)
+
 			if DEBUG:
-				print "Waiting ten seconds after request"
-
-			time.sleep(self.sleep) ### Added sleep timer here because easily place to control requests
+				print "Waiting %s seconds after request" % self.sleep
+				time.sleep(self.sleep) ### Added sleep timer here because easily place to control requests
 			
-			if self.url.status_code != 200:
-				self.url_log()
-	
-			else:	
+		######################## Replace with Behavior Rules ######################
 
+			### Load Scraping Rules
+			### If  name === publication:
+
+			### if length of header is less than something,
+			### log it but don't save 
+
+			if self.url.status_code != 200: # what about false positivies
+				self.url_log()
+				self.load_log()
+				self.updatecache()
+				self.write_log()
+
+
+
+
+			else:	
 				self.main()
 
-			if DEBUG:
+		#############################################################################3
 
-				print "Main executed at %s" % self.time
 		
 		except requests.exceptions.ConnectionError:
 			self.url = None
 			self.status_code = None
 			self.url_log()
 
-
 			if DEBUG:
-
 				print "ConnectionError Exception Caught"
 
 		except NameError: # if URL already in logger
-
 			pass
 
 	def check_log(self):
@@ -81,84 +89,50 @@ class Collector(object):
 
 		Otherwise it will process the URL
 		"""
-
-
-
 		filename = "url_logger.csv"
 
 		if not os.path.isfile(filename):
 			with open(filename, "w+") as f:
-				columns = ["url_request", "url_status_code", "name",  "time"]
+				columns = ["url_request", "url_status_code", "header_len", "response_len", "name",  "time", "message"]
 				csv_writer = csv.writer(f)
 				csv_writer.writerow(columns)
-				
-
 
 		else:
 			with open(filename, 'r') as f:
-
 				reader = csv.reader(f)
-
 				for row in reader:
-	
-
-
 					if row[0] == self.urlraw:
 						if DEBUG:
 							print "Already scraped"
 						raise NameError("URL has already been scraped")
-					
-				
-
-			# self.urlraw, str(self.status_code)
-
 
 	def url_log(self):
 		"""    """
 		filename = "url_logger.csv"
-		columns = ["url_request", "url_status_code", "name",  "time"]
-		data = [self.urlraw, str(self.status_code), self.name, str(self.time)]
-
-
+		
+		data = [self.urlraw, str(self.status_code), len(self.url.headers), len(self.url.content) , self.name, str(self.time), self.message]
 
 		with open(filename, 'a+') as f:
 			csv_writer = csv.writer(f)
 			csv_writer.writerow(data)
-				
-
-	#### NEED to write unique HEADER identification class for each site being scrapped			
-
-
-
 
 	def setUp(self):
 
 		self.text = self.url.text # unicode
 		self.headers = self.url.headers
 		self.headers.update({"scrape_time": str(self.time)})
-
 		self.content = self.url.content # string
-		
-		# self.date = self.headers['date'].replace(',','').replace(' ','_') ### update to the time scrapped
-
 		self.date = str(self.time)
-		
 		self.dirname = 'data/' + self.name + "/"
 		self.log_file = self.name + "_log.json"
 		self.log_path = self.dirname + self.log_file
-
-		# self.filename = self.headers['content-length'] + "_" + self.date + ".txt" ### removed to generalize to other media sitess
-
 		self.filename = self.date + ".txt"
-
 		self.file_path = self.dirname + self.filename 
-
 
 		if not os.path.exists(self.dirname):
 			os.makedirs(self.dirname)
-			
+		
 			if DEBUG:
-
 				print "*** %s created" % (self.dirname)
 
 		self.write_file()
@@ -168,16 +142,17 @@ class Collector(object):
 		"""
 		Loads a serialized json file to a memory as the CACHE, otherwise creates the file.
 		"""
+		self.setUp()
+
 		if os.path.isfile(self.log_path):
 			with open(self.log_path, 'r+') as outfile:
 			 	data = json.load(outfile)
 			 	self.cache.update(data)
 		else:
-			
 			if DEBUG:
 				print "*** %s created" % (self.log_file)
-
 			pass
+
 
 	def write_log(self):
 		"""Writes the CACHE to JSON serialized file	"""		
@@ -212,10 +187,7 @@ class Collector(object):
 			if DEBUG:
 				print "Content does not exist"
 
-
-
-
-			
+	
 
 	def write_file(self):
 		"Writes response to file with unique identifer"
@@ -230,16 +202,16 @@ class Collector(object):
 
 
 	def main(self):
-
-
+		if DEBUG:
+			print "Main executed at %s" % self.time
+		
 		self.url_log()
 		self.setUp()
 		self.load_log()
 		self.updatecache()
 		self.write_log()
-		
 
-
+		return self.content
 
 		if DEBUG:
 			print "All finished"
