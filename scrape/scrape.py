@@ -57,9 +57,7 @@ class Collector(object):
 
 			if self.url.status_code != 200: # what about false positivies
 				self.url_log()
-				self.load_log()
-				self.updatecache()
-				self.write_log()
+				
 
 
 

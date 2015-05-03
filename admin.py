@@ -65,5 +65,5 @@ if __name__ == "__main__":
 
 			print url, site, sleep
 			
-			# Collector(name=site, urlraw=url, sleep=sleep, message="test_extactor")
+			Collector(name=site, urlraw=url, sleep=sleep, message="test_extactor")
 		
