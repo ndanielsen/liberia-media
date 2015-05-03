@@ -34,6 +34,7 @@ class Collector(object):
 		self.message = message
 		self.cache = {}
 		self.time = datetime.datetime.fromtimestamp(time.time())
+		self.filename = "data/url_logger.csv"
 		
 
 		try:
@@ -87,16 +88,15 @@ class Collector(object):
 
 		Otherwise it will process the URL
 		"""
-		filename = "url_logger.csv"
-
+		
 		if not os.path.isfile(filename):
-			with open(filename, "w+") as f:
+			with open(self.filename, "w+") as f:
 				columns = ["url_request", "url_status_code", "header_len", "response_len", "name",  "time", "message"]
 				csv_writer = csv.writer(f)
 				csv_writer.writerow(columns)
 
 		else:
-			with open(filename, 'r') as f:
+			with open(self.filename, 'r') as f:
 				reader = csv.reader(f)
 				for row in reader:
 					if row[0] == self.urlraw:
@@ -106,11 +106,11 @@ class Collector(object):
 
 	def url_log(self):
 		"""    """
-		filename = "url_logger.csv"
+		
 		
 		data = [self.urlraw, str(self.status_code), len(self.url.headers), len(self.url.content) , self.name, str(self.time), self.message]
 
-		with open(filename, 'a+') as f:
+		with open(self.filename, 'a+') as f:
 			csv_writer = csv.writer(f)
 			csv_writer.writerow(data)
 
