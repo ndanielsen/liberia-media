@@ -54,9 +54,9 @@ if __name__ == "__main__":
 
 	for site, base_url, sleep in media:
 
-		url = base_url + str("'")
+		url = base_url + str(350)
 
-		Collector(name=site, urlraw=url, sleep=0, message="test_negative")
+		Collector(name=site, urlraw=url, sleep=0, message="test_extactor")
 		
 
 
