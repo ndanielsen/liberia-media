@@ -13,15 +13,15 @@ from scrape.scrape import Collector
 
 media = [
 
-		("theinquirer", "http://www.theinquirer.com.lr/content1.php?main=news&news_id=", 5),
+		
 
 		("theanalyst", "http://news.analystliberia.com/index.php/news/", 10), ### JOOMLA unique story ids for all categories 
 
 		("frontpageafricaonline", "http://www.frontpageafricaonline.com/index.php/news/", 5), ### unique numbers for each story, go back and pick out category later
 
-		("thenewdawn", "http://www.thenewdawnliberia.com/general/", 5),  # Joomla
+		("thenewdawn", "http://www.thenewdawnliberia.com/general/", 7),  # Joomla
 
-		("liberianewsagency", "http://www.liberianewsagency.org/pagesnews.php?nid=", 5), # custom built but look like page iternation would work
+	
 
 		("post1847", "http://www.1847post.com/?q=node/", 10 ), # node based iternation would work
 
@@ -29,11 +29,18 @@ media = [
 
 		('dailyobserver', "http://www.liberianobserver.com/node/", 10), #drupal nodebased
 
-		('golministryofinformation', 'http://www.micatliberia.com/index.php/blog/', 5) #JOOMLA nodebase
+		('golministryofinformation', 'http://www.micatliberia.com/index.php/blog/', 7) #JOOMLA nodebase
 
 			]
 
-	
+
+
+shitty_media = [
+
+		("theinquirer", "http://www.theinquirer.com.lr/content1.php?main=news&news_id=", 5),
+
+		("liberianewsagency", "http://www.liberianewsagency.org/pagesnews.php?nid=", 5), # custom built but look like page iternation would work
+]
 
 
 
@@ -47,19 +54,16 @@ media = [
 
 if __name__ == "__main__":
 
-	numbers = [num for num in range(350, 400)]
+	numbers = [num for num in range(1, 5000)]
 
-	# for num in numbers:
-	# 	print num
+	for num in numbers:
+		# print num
 
-	for site, base_url, sleep in media:
+		for site, base_url, sleep in media:
 
-		url = base_url + str(350)
+			url = base_url + str(num)
 
-		Collector(name=site, urlraw=url, sleep=0, message="test_extactor")
+			print url, site, sleep
+			
+			# Collector(name=site, urlraw=url, sleep=sleep, message="test_extactor")
 		
-
-
-	# print "Hello"
-
-	# scraper = Collector(name="theanalyst", urlraw="http://news.analystliberia.com/index.php/memo/401", )#sleep=None)
