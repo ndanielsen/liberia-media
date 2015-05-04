@@ -23,22 +23,22 @@ class Collector(object):
 	Downloads a unique page to a data folder and files the page header into a json object with 'link' being the key
 	"""
 
-	global DEBUG
-	DEBUG = True
-
-
-	def __init__(self, name=None, urlraw=None, sleep=0, message="default"):
+	def __init__(self, name=None, urlraw=None, sleep=0, message="default", debug=False):
 		self.name = name.lower().replace(" ", '')
 		self.urlraw = urlraw
 		self.sleep = float(sleep)
 		self.message = message
+		self.debug = debug
 		self.cache = {}
 		self.time = datetime.datetime.fromtimestamp(time.time())
 		self.filename = "data/url_logger.csv"
 		
+		global DEBUG
+		DEBUG = self.debug
+
 
 		try:
-			self.check_log()
+			# self.check_log(self.urlraw)
 			self.url = requests.get(urlraw) 
 			self.status_code = self.url.status_code
 
@@ -77,32 +77,7 @@ class Collector(object):
 			if DEBUG:
 				print "ConnectionError Exception Caught"
 
-		except NameError: # if URL already in logger
-			pass
 
-	def check_log(self):
-		"""
-		Checks the log file to see if the URL Raw has already been process.
-
-		If processed already, it will continue to the next order
-
-		Otherwise it will process the URL
-		"""
-		
-		if not os.path.isfile(filename):
-			with open(self.filename, "w+") as f:
-				columns = ["url_request", "url_status_code", "header_len", "response_len", "name",  "time", "message"]
-				csv_writer = csv.writer(f)
-				csv_writer.writerow(columns)
-
-		else:
-			with open(self.filename, 'r') as f:
-				reader = csv.reader(f)
-				for row in reader:
-					if row[0] == self.urlraw:
-						if DEBUG:
-							print "Already scraped"
-						raise NameError("URL has already been scraped")
 
 	def url_log(self):
 		"""    """
@@ -124,8 +99,8 @@ class Collector(object):
 		self.dirname = 'data/' + self.name + "/"
 		self.log_file = self.name + "_log.json"
 		self.log_path = self.dirname + self.log_file
-		self.filename = self.date + ".txt"
-		self.file_path = self.dirname + self.filename 
+		self.content_filename = self.date + ".txt"
+		self.file_path = self.dirname + self.content_filename 
 
 		if not os.path.exists(self.dirname):
 			os.makedirs(self.dirname)
