@@ -62,8 +62,6 @@ class Scraper_Admin(object):
 
 				queue = self.process_list[:10]
 
-				queue.reverse()
-
 				for order in range(len(queue)): ### list only processes ten at a time
 					site, sleep, url = queue[order]
 
