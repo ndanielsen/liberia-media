@@ -60,8 +60,12 @@ class Scraper_Admin(object):
 
 			try:
 
-				for order in range(len(self.process_list[:10])): ### list only processes ten at a time
-					site, sleep, url = self.process_list[order]
+				queue = self.process_list[:10]
+
+				queue.reverse()
+
+				for order in range(len(queue)): ### list only processes ten at a time
+					site, sleep, url = queue[order]
 
 					try:
 						self.check_log(url) ### checks the log file to see if it's already been requested

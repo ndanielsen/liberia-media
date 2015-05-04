@@ -23,12 +23,11 @@ class Collector(object):
 	Downloads a unique page to a data folder and files the page header into a json object with 'link' being the key
 	"""
 
-	def __init__(self, name=None, urlraw=None, sleep=0, message="default", debug=False):
+	def __init__(self, name=None, urlraw=None, message="default", debug=False):
 		self.name = name.lower().replace(" ", '')
 		self.urlraw = urlraw
-		self.sleep = float(sleep)
 		self.message = message
-		self.debug = debug
+		self.debug = False
 		self.cache = {}
 		self.time = datetime.datetime.fromtimestamp(time.time())
 		self.filename = "data/url_logger.csv"
@@ -42,12 +41,7 @@ class Collector(object):
 			self.url = requests.get(urlraw) 
 			self.status_code = self.url.status_code
 
-			# print len(self.url.headers)
 
-			if DEBUG:
-				print "Waiting %s seconds after request" % self.sleep
-				time.sleep(self.sleep) ### Added sleep timer here because easily place to control requests
-			
 		######################## Replace with Behavior Rules ######################
 
 			### Load Scraping Rules
@@ -108,7 +102,7 @@ class Collector(object):
 			if DEBUG:
 				print "*** %s created" % (self.dirname)
 
-		self.write_file()
+		# self.write_file()
 
 
 	def load_log(self):
@@ -169,14 +163,12 @@ class Collector(object):
 			outfile.write(self.content)
 		
 			if DEBUG:
-				print "%s written" % (self.file_path)
+				print "written: %s " % (self.file_path)
 
 		pass
 
 
 	def main(self):
-		if DEBUG:
-			print "Main executed at %s" % self.time
 		
 		self.url_log()
 		self.setUp()
