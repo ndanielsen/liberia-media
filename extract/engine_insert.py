@@ -9,13 +9,7 @@ engine = create_engine('sqlite:///sqlalchemy_example.db')
 Base.metadata.bind = engine
  
 DBSession = sessionmaker(bind=engine)
-# A DBSession() instance establishes all conversations with the database
-# and represents a "staging zone" for all the objects loaded into the
-# database session object. Any change made against the objects in the
-# session won't be persisted into the database until you call
-# session.commit(). If you're not happy about the changes, you can
-# revert all of them back to the last commit by calling
-# session.rollback()
+
 session = DBSession()
  
 # Insert a Person in the person table
@@ -32,6 +26,42 @@ post_date =  "2015-0401"
 
 
 
-new_content = Content(title=title, sub_title=sub_title, author=author, main_content= main_content, post_date=post_date )
+new_content = Content(name=name, title=title, sub_title=sub_title, author=author, main_content= main_content, post_date=post_date )
 session.add(new_content)
 session.commit()
+
+
+class Engine(object):
+	"""
+	Object for creating and inserting items into DB engine
+
+	Tries to connect to DB. If not, creates a db and executes main instructions.
+	"""
+
+
+	def __init__(self):
+
+		self.db = "name of db TBD"
+
+		try:
+
+			self.engine = create_engine('sqlite:///sqlalchemy_example.db')
+
+			#excute main
+
+		except Error:
+
+			#create DB
+
+			# execute main
+			pass
+
+
+	def main(self):
+
+		new_content = Content(name=name, title=title, sub_title=sub_title, author=author, main_content= main_content, post_date=post_date )
+		session.add(new_content)
+		session.commit()
+
+		pass
+
