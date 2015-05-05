@@ -28,7 +28,7 @@ class Scraper_Admin(object):
 	"""
 
 
-	def __init__(self, media=None, lowrange=1, highrange=5000, message="default", debug=False):
+	def __init__(self, media=None, lowrange=1, highrange=5000, message="default", debug=True):
 
 		
 
@@ -60,13 +60,16 @@ class Scraper_Admin(object):
 
 			try:
 
-				queue = self.process_list[:10]
+				queue = self.process_list[:25]
 
 				for order in range(len(queue)): ### list only processes ten at a time
 					site, sleep, url = queue[order]
+					
 
 					try:
-						self.check_log(url) ### checks the log file to see if it's already been requested
+						self.check_log(url)
+
+						 ### checks the log file to see if it's already been requested
 						elapsed_seconds = time.time() - self.cache[site]    #### checks the time delta
 
 						if 	elapsed_seconds > sleep: # if the timedelta is greater than the sleep time
@@ -75,13 +78,14 @@ class Scraper_Admin(object):
 							del self.process_list[order]
 
 							if DEBUG:
-								print 'removed: ', url, "secs: ", elapsed_seconds
+								print 'scraped: ', url, "secs: ", elapsed_seconds
 							
 						else:
 							pass
 
 					except NameError:
 						del self.process_list[order]
+						pass
 
 			except IndexError:
 				pass
@@ -117,11 +121,11 @@ class Scraper_Admin(object):
 				reader = csv.reader(f)
 				for row in reader:
 					if row[0] == url:
-						raise NameError("URL has already been scraped")
+						
 
 						if DEBUG:
 							print "Already scraped", url
-
+						raise NameError("URL has already been scraped")
 
 
 	def main(self):

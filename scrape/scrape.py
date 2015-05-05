@@ -23,11 +23,11 @@ class Collector(object):
 	Downloads a unique page to a data folder and files the page header into a json object with 'link' being the key
 	"""
 
-	def __init__(self, name=None, urlraw=None, message="default", debug=False):
+	def __init__(self, name=None, urlraw=None, message="default", debug=True):
 		self.name = name.lower().replace(" ", '')
 		self.urlraw = urlraw
 		self.message = message
-		self.debug = False
+		self.debug = debug
 		self.cache = {}
 		self.time = datetime.datetime.fromtimestamp(time.time())
 		self.filename = "data/url_logger.csv"
