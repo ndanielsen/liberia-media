@@ -51,7 +51,7 @@ shitty_media = [
 
 if __name__ == "__main__":
 
-	test = Scraper_Admin(media, lowrange=1, highrange=5000, message="production1", debug=True)
+	test = Scraper_Admin(media, lowrange=1, highrange=15000, message="production1", debug=True)
 	
 	test.main()
 

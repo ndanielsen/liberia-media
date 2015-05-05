@@ -74,10 +74,28 @@ class Collector(object):
 
 
 	def url_log(self):
-		"""    """
+
+		"""Appends content log to file   """
 		
+		try:
+
+			headers = len(self.url.headers)
+
+		except AttributeError:
+
+			headers = 0
+
+
+		try:
+
+			content = len(self.url.content)
+
+		except AttributeError:
 		
-		data = [self.urlraw, str(self.status_code), len(self.url.headers), len(self.url.content) , self.name, str(self.time), self.message]
+			content = 0
+
+
+		data = [self.urlraw, str(self.status_code), headers, content , self.name, str(self.time), self.message]
 
 		with open(self.filename, 'a+') as f:
 			csv_writer = csv.writer(f)
