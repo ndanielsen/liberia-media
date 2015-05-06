@@ -1,3 +1,15 @@
+#!/usr/local/bin/python
+ # -*- coding: utf-8 -*-
+"""
+Database engine for content extraction 
+
+Using SQLlite because it's easy
+
+Author:
+Nathan Danielsen
+nathan.danielsen [at] gmail.com
+"""
+
 import os
 
 from sqlalchemy import create_engine
@@ -31,6 +43,9 @@ class Engine(object):
 	Object for creating and inserting items into DB engine
 
 	Tries to connect to DB. If not, creates a db and executes main instructions.
+
+	Flexible with the keyword arguments to allow for different DBs and types of datamodels to be entered
+
 	"""
 
 
@@ -57,23 +72,30 @@ class Engine(object):
 		self.connectDB()
 
 
-		self.session.add(self.scrapelog)
+		### should check that the record isn't already present
+		### checking the time of the record is probably the best idea
+
+		self.session.add(self.scrapelog) 
+
 		# (self.session.add(entry) for entry in self.commitlist)
 		# print self.commitlist
+		
+
 		self.session.commit()
 
+
+		### Just testing that it works
 		first = self.session.query(ScrapeLog).first()
-		
 		print first.name, first.time
 
 
-	def ScrapeLog(self):
+	def ScrapeLog(self): ### Create more of this for each case 
 		# name, filename, url_request, url_status_code, header_len, response_len, time, message 
 		url_request, url_status_code,header_len,response_len,name,time,message = self.scrapelog
 		self.scrapelog = ScrapeLog(	name=name, url_request=url_request, url_status_code=url_status_code, 
 									header_len=header_len, response_len=response_len, time=time, message=message )
 
-
+		print self.scrapelog.time, "is the record time"
 
 	def connectDB(self):
 
