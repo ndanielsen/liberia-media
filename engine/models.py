@@ -1,6 +1,6 @@
 import os
 import sys
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
@@ -8,13 +8,25 @@ from sqlalchemy import create_engine
 
 Base = declarative_base()
 
+class ScrapeLog(Base):
+
+	__tablename__ = 'scrapelog'
+	id = Column(Integer, primary_key=True)
+	name = Column(String(250))
+	url_request = Column(String(250))
+	url_status_code = Column(String(250))
+	header_len = Column(String(250))
+	response_len = Column(String(250))
+	time = Column(String(250))
+	message = Column(String(50))
+
+
 class Log(Base):
 
 	__tablename__ = 'log'
 	id = Column(Integer, primary_key=True)
 	name = Column(String(250), nullable=False)
 	filename = Column(String(250), nullable=False)
-
 
 class Content(Base):
 
@@ -38,6 +50,8 @@ class Image(Base):
 	imageurl = Column(String(250))
 	log_id = Column(Integer, ForeignKey('log.id'))
 	log = relationship(Log)
+
+
 
 
 if __name__ == "__main__":
