@@ -10,32 +10,15 @@ Nathan Danielsen
 nathan.danielsen [at] gmail.com
 """
 
+
 import os
 
+import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
  
-from models import Base, Log, Content, Image, ScrapeLog
+from models import Base, Log, Content, Image, ScraperLog
 
-# Bind the engine to the metadata of the Base class so that the
-# declaratives can be accessed through a DBSession instance
-# Base.metadata.bind = engine
- 
-# DBSession = sessionmaker(bind=engine)
-
-# session = DBSession()
- 
-# # Insert a Person in the person table
-# new_log = Log(name='new file 234', filename="somefile.txt")
-# session.add(new_log)
-# session.commit()
- 
-# # Insert an Address in the address table
-# title = "New title"
-# sub_title = "sub_title"
-# author = "Mr Someone"
-# main_content = "hoahdsfkajfljadf;jad;lfkjsa;lfdja;ljfnwjlaslfdjalkjfa"
-# post_date =  "2015-0401"
 
 
 class Engine(object):
@@ -49,7 +32,7 @@ class Engine(object):
 	"""
 
 
-	def __init__(self, engine=None, log=None, content=None, image=None, scrapelog=None, debug=True):
+	def __init__(self, engine=None, log=None, content=None, image=None, scraperlog=None, debug=True):
 
 		self.dbname = engine + '.db'
 		self.debug = debug
@@ -57,45 +40,88 @@ class Engine(object):
 		self.log = log
 		self.content = content
 		self.image = image
-		self.scrapelog = scrapelog
-
-
-		if not os.path.isfile(self.dbname) :
-			self.createDB()
+		self.scraperlog = scraperlog
 
 
 		self.commitlist = []
 
-		if self.scrapelog: ### need to create method to check if any class attributes are positive and if they are, create the DB object like here
-			self.ScrapeLog()
+		if not os.path.isfile(self.dbname) : # if DB doesn't exist, it will be created
+			self.createDB()
 
 		self.connectDB()
 
-
-		### should check that the record isn't already present
-		### checking the time of the record is probably the best idea
-
-		self.session.add(self.scrapelog) 
-
-		# (self.session.add(entry) for entry in self.commitlist)
-		# print self.commitlist
 		
+		if self.scraperlog: ### need to create method to check if any class attributes are positive and if they are, create the DB object like here
+			self.ScraperLog()
+
+
+		# for entry in self.commitlist:
+			
+		# 	self.session.add(entry) 
+			
+
+		# 	# 	print 'Exception'
+
+
+		for entry in self.commitlist:
+			
+			try:
+				self.session.add(entry)
+				 
+			
+			except sqlalchemy.exc.IntegrityError as ex:
+				print 'Exception'
+				print type(self.commitlist)
+				next(self.commitlist, None)
+
 
 		self.session.commit()
+		
+
+		if self.debug:
+
+			print "Ending DB connection"
 
 
-		### Just testing that it works
-		first = self.session.query(ScrapeLog).first()
-		print first.name, first.time
+		
 
-
-	def ScrapeLog(self): ### Create more of this for each case 
+	def ScraperLog(self): ### Create more of this for each case 
 		# name, filename, url_request, url_status_code, header_len, response_len, time, message 
-		url_request, url_status_code,header_len,response_len,name,time,message = self.scrapelog
-		self.scrapelog = ScrapeLog(	name=name, url_request=url_request, url_status_code=url_status_code, 
-									header_len=header_len, response_len=response_len, time=time, message=message )
+		
+		log_len = len(self.scraperlog)
+		
 
-		print self.scrapelog.time, "is the record time"
+		if log_len > 1 and log_len != 7:
+			for row in self.scraperlog:
+				timedate, url_request, url_status_code,header_len,response_len,name,message = row
+				row =  ScraperLog(timedate=timedate, name=name, url_request=url_request, url_status_code=url_status_code, 
+										header_len=header_len, response_len=response_len, message=message )
+
+				self.commitlist.append(row)
+
+		else:
+
+				timedate, url_request, url_status_code,header_len,response_len,name,message = self.scraperlog
+				self.scraperlog =  ScraperLog(timedate=timedate, name=name, url_request=url_request, url_status_code=url_status_code, 
+										header_len=header_len, response_len=response_len, message=message )
+
+				self.commitlist.append(self.scraperlog)
+
+		if self.debug:
+
+			print "Scarper log added to commit list"
+
+		
+
+
+
+	def erorcheck_db(self, check_table=None, column=None, value=None):
+		"""
+		Runs through DB and checks if there are identical entries such as url_request or etc.
+		"""
+		self.query = self.session.query(check_table).all()
+
+
 
 	def connectDB(self):
 
@@ -110,10 +136,57 @@ class Engine(object):
 			print "New DB %s created" % self.dbname
 
 
+	def report(self):
+
+		self.erorcheck_db(check_table=ScraperLog)
+
+		for row in self.query:
+			print row.url_request, row.timedate
+
+
 
 
 if __name__ == '__main__':
 
-	log = ["http://news.analystliberia.com/index.php/news/1",404,12,874,"theanalyst","2015-05-03 12:33:16.688633","production"]
+	from dateutil import parser 
+	import datetime 
+	import time
+	import sqlalchemy
 	
-	Engine(engine='test', scrapelog=log)
+	# try:
+
+	
+	# now2 = datetime.datetime.fromtimestamp(time.time())
+
+	# row1 = [parser.parse("2015-05-03 12:33:16.688633"), u"http://news.analystliberia.com/index.php/news/1",404,12,874,u"theanalyst",u'production']
+
+	now2 = datetime.datetime.fromtimestamp(time.time())
+
+	row1 = [now2, u"http://news.analystliberia.com/index.php/news/1",404,12,874,u"theanalyst",u'production']
+
+
+	
+	# except sqlalchemy.exc.IntegrityError:
+
+	now = datetime.datetime.fromtimestamp(time.time())
+
+	row2 = [now, u"http://news.analystliberia.com/index.php/news/1",404,12,874,u"theanalyst",u'production']
+
+	log = [row1, row2]
+
+
+	Engine(engine='new_test', scraperlog=log).main()
+
+
+	# 	Engine(engine='test', scraperlog=log).main()
+
+	# 	print 'ok', now
+
+	# except Exception as ex:
+
+	# 	print ex.__class__
+
+
+	# finally:
+
+	# 	print 'done'

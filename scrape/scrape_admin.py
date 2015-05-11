@@ -112,7 +112,7 @@ class Scraper_Admin(object):
 
 		if not os.path.isfile(self.filename):
 			with open(self.filename, "w+") as f:
-				columns = ["url_request", "url_status_code", "header_len", "response_len", "name",  "time", "message"]
+				columns = ["url_request", "url_status_code", "header_len", "response_len", "name",  "timedate", "message"]
 				csv_writer = csv.writer(f)
 				csv_writer.writerow(columns)
 
