@@ -20,7 +20,7 @@ sys.setdefaultencoding('utf8')
 
 
 
-class Extractor(object):
+class DailyObserverExtractor(object):
 
 	def __init__(self, name=None, num=None, debug=True):
 
@@ -35,6 +35,13 @@ class Extractor(object):
 		self.extractlist = []
 
 		self.hello = 'hello'
+
+	def whitespaceremover(self, field):
+		field = field.replace(u'\xa0', u'')
+		
+		return field.strip()
+
+
 
 	def contents_cleaner(self, soup):
 		# body = soup.findAll(name='div', attrs={'class':"field-items"})#     title = str(title)
@@ -70,6 +77,7 @@ class Extractor(object):
 
 		try:
 			title = main_body.find(name="h1",  attrs={'class':"title"}).text
+			title = title.replace(u'\xa0', u' ')
 
 			if 'edition' in title.split(): 
 				raise Exception
@@ -81,8 +89,9 @@ class Extractor(object):
 		try:
 			author = main_body.find(name="div",  attrs={'class':"field field-name-field-by field-type-text field-label-inline clearfix"}).text 
 			author = author.replace('By:', '').replace('By', '')
-		except Exception:
-			author = None
+			author = self.whitespaceremover(author)
+		except AttributeError:
+		 	author = None
 
 
 		try:
@@ -102,7 +111,7 @@ class Extractor(object):
 		except Exception:
 			date = None
 
-		return true_url, title, date, author, clean_content, image_url
+		return true_url, title, date, author#, clean_content, image_url
 
 	
 	def comments(self):
@@ -135,7 +144,7 @@ class Extractor(object):
 
 if __name__ == '__main__':
 
-	e = Extractor(name='dailyobserver')
+	e = DailyObserverExtractor(name='dailyobserver')
 	
 	for num in xrange(1,50):
 		print e.cleaner(num=num)

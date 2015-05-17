@@ -31,14 +31,13 @@ Base = declarative_base()
 class ScraperLog(Base):
 
 	__tablename__ = 'scraperlog'
-	
-	
+	id = Column(Integer, primary_key=True)	
 	name = Column(Unicode(250))
 	url_request = Column(Unicode(250))
 	url_status_code = Column(Integer)
 	header_len = Column(Integer)
 	response_len = Column(Integer)
-	timedate = Column(DateTime, primary_key= True)	
+	timedate = Column(DateTime)	
 	message = Column(Unicode(50))
 	error = Column(Boolean, default=False)
 

@@ -61,10 +61,8 @@ class Engine_URL_Logger(object):
         Engine(engine=self.urlengine, scraperlog=self.loglist, debug=self.debug)
 
 
-
-
 if __name__ == "__main__":
 
     print 'hello'
 
-    Engine_URL_Logger(engine='test', inputfile="data/sample.csv" )
+    Engine_URL_Logger(engine='liberia_main', inputfile="data/url_logger.csv" )
