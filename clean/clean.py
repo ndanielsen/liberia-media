@@ -11,12 +11,14 @@ nathan.danielsen [at] gmail.com
 """
 
 import os
-import bs4
-
 import sys  
 
 reload(sys)  
 sys.setdefaultencoding('utf8')
+
+import arrow
+import bs4
+
 
 
 
@@ -40,6 +42,18 @@ class DailyObserverExtractor(object):
 		field = field.replace(u'\xa0', u'')
 		
 		return field.strip()
+
+	def emailremover(self, field):
+		cleaned = u''
+		field = field.split()
+		for word in field:
+			if word.find('@') > 0:
+				pass
+			else:
+				cleaned += word + u' '
+
+		return cleaned
+
 
 
 
@@ -89,10 +103,11 @@ class DailyObserverExtractor(object):
 		try:
 			author = main_body.find(name="div",  attrs={'class':"field field-name-field-by field-type-text field-label-inline clearfix"}).text 
 			author = author.replace('By:', '').replace('By', '')
+			author = self.emailremover(author)
 			author = self.whitespaceremover(author)
+		
 		except AttributeError:
 		 	author = None
-
 
 		try:
 			content_body = main_body.find(name='div', attrs={'class':"field field-name-body field-type-text-with-summary field-label-hidden"})
@@ -107,11 +122,15 @@ class DailyObserverExtractor(object):
 
 		try:
 			date = main_body.find(name="span",  attrs={'class':"date"}).text
+			date = date[5:]
+			date = arrow.get(date, 'MM/DD/YYYY - HH:mm')
+			date = date.naive
 
 		except Exception:
 			date = None
 
-		return true_url, title, date, author#, clean_content, image_url
+		# return true_url, title, date#, author#, clean_content#, image_url
+		return date
 
 	
 	def comments(self):
