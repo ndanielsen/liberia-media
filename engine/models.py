@@ -17,7 +17,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 
-### TO DO: Should the primary key be the timedate object?
+### TO DO: Should the primary key be the datetime object?
 
 
 
@@ -37,32 +37,47 @@ class ScraperLog(Base):
 	url_status_code = Column(Integer)
 	header_len = Column(Integer)
 	response_len = Column(Integer)
-	timedate = Column(DateTime)	
+	datetime = Column(DateTime)	
 	message = Column(Unicode(50))
 	error = Column(Boolean, default=False)
 
 
 class Log(Base):
+	"""
+	name, filename, category, title, datetime # to unpack
+	Log(name=name, filename=filename, category=category, title=title, datetime=datetime)
 
+	"""
 	__tablename__ = 'log'
 	id = Column(Integer, primary_key=True)
-	name = Column(String(250), nullable=False)
-	filename = Column(String(250), nullable=False)
+	name = Column(Unicode)
+	filename = Column(Unicode, nullable=False)
+	category = Column(Unicode)
+	title = Column(Unicode)
+	datetime = Column(DateTime)
 
 class Content(Base):
-
+	"""
+	name, true_url, category, title, datetime, author, clean_content, image_url
+	
+	Content(name=name, true_url=true_url, category=category, title=title, datetime=datetime, author=author, clean_contentclean_content, image_url=image_url)
+	"""
 	__tablename__ = "content"
 
 	id = Column(Integer, primary_key=True)
 	name = Column(String(250), nullable=False)
-	title = Column(String(250))
-	sub_title = Column(String(250))
-	author = Column(String(250), index=True)
-	main_content = Column(String(2500)) #figure out better for this
-	post_date = Column(String(250)) #change to time date object
+	true_url = Column(Unicode)
+	category = Column(Unicode)
+	title = Column(Unicode)
+	datetime = Column(DateTime)	
+	author = Column(Unicode)
+	clean_content = Column(Unicode)
+	image_url = Column(Unicode)
+
 	log_id = Column(Integer, ForeignKey('log.id'))
 	log = relationship(Log)
-	true_url = Column(Unicode)
+	
+
 
 class Image(Base):
 

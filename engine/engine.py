@@ -54,13 +54,11 @@ class Engine(object):
 		if self.scraperlog: ### need to create method to check if any class attributes are positive and if they are, create the DB object like here
 			self.ScraperLog()
 
+		if self.log:
+			self.Log()
 
-		# for entry in self.commitlist:
-			
-		# 	self.session.add(entry) 
-			
-
-		# 	# 	print 'Exception'
+		if self.content:
+			self.Content()
 
 
 		for entry in self.commitlist:
@@ -85,24 +83,23 @@ class Engine(object):
 
 		
 
-	def ScraperLog(self): ### Create more of this for each case 
-		# name, filename, url_request, url_status_code, header_len, response_len, time, message 
+	def ScraperLog(self): 
 		
 		log_len = len(self.scraperlog)
 		
 
 		if log_len > 1 and log_len != 7:
 			for row in self.scraperlog:
-				timedate, url_request, url_status_code,header_len,response_len,name,message = row
-				row =  ScraperLog(timedate=timedate, name=name, url_request=url_request, url_status_code=url_status_code, 
+				datetime, url_request, url_status_code,header_len,response_len,name,message = row
+				row =  ScraperLog(datetime=datetime, name=name, url_request=url_request, url_status_code=url_status_code, 
 										header_len=header_len, response_len=response_len, message=message )
 
 				self.commitlist.append(row)
 
 		else:
 
-				timedate, url_request, url_status_code,header_len,response_len,name,message = self.scraperlog
-				self.scraperlog =  ScraperLog(timedate=timedate, name=name, url_request=url_request, url_status_code=url_status_code, 
+				datetime, url_request, url_status_code,header_len,response_len,name,message = self.scraperlog
+				self.scraperlog =  ScraperLog(datetime=datetime, name=name, url_request=url_request, url_status_code=url_status_code, 
 										header_len=header_len, response_len=response_len, message=message )
 
 				self.commitlist.append(self.scraperlog)
@@ -112,6 +109,65 @@ class Engine(object):
 			print "Scarper log added to commit list"
 
 		
+
+	def Log(self):
+
+		
+		log_len = len(self.log)
+		
+
+		if log_len > 1 and log_len != 7:
+			for row in self.log:
+
+				name, filename, category, title, datetime = row
+
+				
+				row =  Log(name=name, filename=filename, category=category, title=title, datetime=datetime)
+
+				self.commitlist.append(row)
+
+		else:
+
+				name, filename, category, title, datetime = self.log
+				self.log =  Log(name=name, filename=filename, category=category, title=title, datetime=datetime)
+
+				self.commitlist.append(self.log)
+
+		if self.debug:
+
+			print "Log added to commit list"
+
+
+
+
+	def Content(self):  
+	
+		content_len = len(self.content)
+	
+		if content_len  > 1 and content_len  != 7:
+			for row in self.content:
+
+				name, true_url, category, title, datetime, author, clean_content, image_url = row
+
+				
+				row =  Content(name=name, true_url=true_url, category=category, title=title, datetime=datetime, author=author, clean_contentclean_content, image_url=image_url)
+
+				self.commitlist.append(row)
+
+		else:
+
+				name, true_url, category, title, datetime, author, clean_content, image_url = self.content
+				self.content =  Content(name=name, true_url=true_url, category=category, title=title, datetime=datetime, author=author, clean_contentclean_content, image_url=image_url)
+
+				self.commitlist.append(self.content)
+
+		if self.debug:
+
+			print "Content added to commit list"
+
+
+
+
 
 
 
@@ -141,7 +197,7 @@ class Engine(object):
 		self.erorcheck_db(check_table=ScraperLog)
 
 		for row in self.query:
-			print row.url_request, row.timedate
+			print row.url_request, row.datetime
 
 
 
@@ -175,7 +231,7 @@ if __name__ == '__main__':
 	log = [row1, row2]
 
 
-	Engine(engine='new_test', scraperlog=log).main()
+	Engine(engine='new_test', scraperlog=log)
 
 
 	# 	Engine(engine='test', scraperlog=log).main()

@@ -53,12 +53,54 @@ class Engine_URL_Logger(object):
                 header_len = row[2]
                 response_len = row[3]
                 name = unicode(row[4]) 
-                timedate = parser.parse(row[5])
+                datetime = parser.parse(row[5])
                 message = unicode(row[6])
-                scraperlog = timedate, url_request, url_status_code, header_len, response_len, name, message
+                scraperlog = datetime, url_request, url_status_code, header_len, response_len, name, message
                 self.loglist.append(scraperlog)
 
         Engine(engine=self.urlengine, scraperlog=self.loglist, debug=self.debug)
+
+
+class Engine_Content(object):
+
+    def __init__(self, engine=None, cleancontent=None, debug=True):
+
+        self.urlengine = engine
+        self.cleancontent = cleancontent
+        self.debug = debug
+        self.unpacker()
+        
+        self.main()
+
+    def unpacker(self):
+
+        self.log = name, filename, category, title, datetime # to unpack
+
+        self.content = name, true_url, category, title, datetime, author, clean_content, image_url #to unpack
+
+        pass
+
+
+
+    def main(self):
+
+
+        Engine(engine=self.urlengine, log=self.log, content=self.content, debug=self.debug)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 if __name__ == "__main__":

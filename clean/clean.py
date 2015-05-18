@@ -23,6 +23,16 @@ import bs4
 
 
 class DailyObserverExtractor(object):
+	"""
+	Takes in a directory of HTML pages for Liberian Daily Obeserver articles
+
+	Goes through various extraction and cleaning procedures
+
+	Returns in unicode: true_url, category, title, date(datetime object), author, clean_content, image_url
+
+	"""
+
+
 
 	def __init__(self, name=None, num=None, debug=True):
 
@@ -41,7 +51,7 @@ class DailyObserverExtractor(object):
 	def whitespaceremover(self, field):
 		field = field.replace(u'\xa0', u'')
 		
-		return field.strip()
+		return field
 
 	def emailremover(self, field):
 		cleaned = u''
@@ -63,11 +73,22 @@ class DailyObserverExtractor(object):
 		try:
 			head = soup.find(name='head')
 			link = head.find(name='link', attrs={'rel':"canonical"})
-			true_url = 'http://liberianobserver.com/' + link['href']
+			true_url = 'http://liberianobserver.com' + link['href']
+			
 
 		except Exception:
 
 			true_url = None
+			
+
+
+		try:
+			category = link['href'].split('/')[1]
+
+		except Exception:	
+
+			category = None
+
 
 		try:
 
@@ -105,6 +126,7 @@ class DailyObserverExtractor(object):
 			author = author.replace('By:', '').replace('By', '')
 			author = self.emailremover(author)
 			author = self.whitespaceremover(author)
+			author = author.strip()
 		
 		except AttributeError:
 		 	author = None
@@ -115,7 +137,9 @@ class DailyObserverExtractor(object):
 
 			clean_content = ''
 			for p in pset:
-				clean_content += p.text + unicode("\n ")
+				p = p.text
+				p = p.replace(u'\xa0', u'')
+				clean_content += p + unicode("\n ")
 
 		except Exception:
 			clean_content = None
@@ -129,8 +153,8 @@ class DailyObserverExtractor(object):
 		except Exception:
 			date = None
 
-		# return true_url, title, date#, author#, clean_content#, image_url
-		return date
+		return true_url, category, title, date, author, clean_content, image_url
+		# return date
 
 	
 	def comments(self):
@@ -157,7 +181,7 @@ class DailyObserverExtractor(object):
 			self.soup = bs4.BeautifulSoup(f)
 			content = self.contents_cleaner(self.soup)
 
-		return doc, content
+		return doc, self.name, content
 
 
 
@@ -165,6 +189,6 @@ if __name__ == '__main__':
 
 	e = DailyObserverExtractor(name='dailyobserver')
 	
-	for num in xrange(1,50):
+	for num in xrange(1,20):
 		print e.cleaner(num=num)
 		print '--' * 100
