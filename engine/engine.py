@@ -150,14 +150,14 @@ class Engine(object):
 				name, true_url, category, title, datetime, author, clean_content, image_url = row
 
 				
-				row =  Content(name=name, true_url=true_url, category=category, title=title, datetime=datetime, author=author, clean_contentclean_content, image_url=image_url)
+				row =  Content(name=name, true_url=true_url, category=category, title=title, datetime=datetime, author=author, clean_content=clean_content, image_url=image_url)
 
 				self.commitlist.append(row)
 
 		else:
 
 				name, true_url, category, title, datetime, author, clean_content, image_url = self.content
-				self.content =  Content(name=name, true_url=true_url, category=category, title=title, datetime=datetime, author=author, clean_contentclean_content, image_url=image_url)
+				self.content =  Content(name=name, true_url=true_url, category=category, title=title, datetime=datetime, author=author, clean_content=clean_content, image_url=image_url)
 
 				self.commitlist.append(self.content)
 

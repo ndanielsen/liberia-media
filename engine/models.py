@@ -58,7 +58,7 @@ class Log(Base):
 
 class Content(Base):
 	"""
-	name, true_url, category, title, datetime, author, clean_content, image_url
+	name, true_url, category, title, datetime, author, clean_content, image_url #to unpack
 	
 	Content(name=name, true_url=true_url, category=category, title=title, datetime=datetime, author=author, clean_contentclean_content, image_url=image_url)
 	"""

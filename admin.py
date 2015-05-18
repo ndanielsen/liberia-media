@@ -8,6 +8,8 @@ email: nathanjdanielsen@gmail.com
 """
 
 from scrape.scrape_admin import Scraper_Admin 
+from engine.engine_admin import Engine_Admin, Engine_Content
+from clean.clean import DailyObserverExtractor
 
 
 
@@ -51,8 +53,15 @@ shitty_media = [
 
 if __name__ == "__main__":
 
-	test = Scraper_Admin(media, lowrange=1, highrange=15000, message="production1", debug=True)
+	# test = Scraper_Admin(media, lowrange=1, highrange=15000, message="production1", debug=True)
 	
-	test.main()
+	# test.main()
+
+	c = DailyObserverExtractor(name='dailyobserver')
 
 
+	
+	for num in xrange(1, 5):
+		entry = c.cleaner(num=num)
+		# print '--' * 100
+		Engine_Content(engine='test', cleancontent=entry, debug=True)

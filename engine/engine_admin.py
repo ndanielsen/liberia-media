@@ -68,11 +68,13 @@ class Engine_Content(object):
         self.urlengine = engine
         self.cleancontent = cleancontent
         self.debug = debug
-        self.unpacker()
         
         self.main()
 
     def unpacker(self):
+
+        name, filename, true_url, category, title, datetime, author, clean_content, image_url = self.cleancontent
+
 
         self.log = name, filename, category, title, datetime # to unpack
 
@@ -84,6 +86,7 @@ class Engine_Content(object):
 
     def main(self):
 
+        self.unpacker()
 
         Engine(engine=self.urlengine, log=self.log, content=self.content, debug=self.debug)
 
