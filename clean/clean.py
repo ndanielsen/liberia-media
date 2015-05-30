@@ -39,6 +39,7 @@ class DailyObserverExtractor(object):
 		self.extractlist = []
 		self.hello = 'hello'
 		self.DEBUG = debug
+		self.headers = ['name', 'filename', 'true_url', 'category', 'title', 'datetime', 'author', 'clean_content', 'image_url']
 
 	def whitespaceremover(self, field):
 		field = field.replace(u'\xa0', u'')
@@ -121,6 +122,9 @@ class DailyObserverExtractor(object):
 			return self.name, filename, true_url, category, title, datetime, author, clean_content, image_url
 
 	def dir_cleaner(self, num=None):
+		"""
+		Cleans the entire dir and returns a list of lists. Takes num to cap files processes (mostly for testing).
+		"""
 
 		if num:
 			self.docs = self.docs[:num]
