@@ -28,16 +28,17 @@ class DailyObserverExtractor(object):
 	"""
 	Takes in a directory of HTML pages for Liberian Daily Obeserver articles
 	Goes through various extraction and cleaning procedures
-	Returns in unicode: true_url, category, title, date(datetime object), author, clean_content, image_url
+	Returns in unicode: publication_name, true_url, category, title, date(datetime object), author, clean_content, image_url
 	"""
 
-	def __init__(self, name=None, num=None, debug=True):
+	def __init__(self, name=None, num=None, debug=None):
 		self.name = name
 		self.num = num
 		self.data_dir = "data/" + self.name + "/"
 		self.docs = glob.glob(self.data_dir + '*.txt')
 		self.extractlist = []
 		self.hello = 'hello'
+		self.DEBUG = debug
 
 	def whitespaceremover(self, field):
 		field = field.replace(u'\xa0', u'')
@@ -110,22 +111,33 @@ class DailyObserverExtractor(object):
 			datetime = None
 		return true_url, category, title, datetime, author, clean_content, image_url
 
-	def cleaner(self, num):
+	def file_cleaner(self, filename):
+		with open(filename, 'r') as f:
+			self.soup = bs4.BeautifulSoup(f)
+			true_url, category, title, datetime, author, clean_content, image_url = self.contents_cleaner(self.soup)
+			if self.DEBUG:
+				print '_________________________'
+
+			return self.name, filename, true_url, category, title, datetime, author, clean_content, image_url
+
+	def dir_cleaner(self, num=None):
 
 		if num:
 			self.docs = self.docs[:num]
+		else:
+			pass
+
+		dir_contents = []
 
 		for filename in self.docs:
-			with open(filename, 'r') as f:
-				self.soup = bs4.BeautifulSoup(f)
-				true_url, category, title, datetime, author, clean_content, image_url = self.contents_cleaner(self.soup)
-			return self.name, filename, true_url, category, title, datetime, author, clean_content, image_url
+			dir_contents.append(self.file_cleaner(filename))
 
+		return dir_contents
 
 if __name__ == '__main__':
 
-	e = DailyObserverExtractor(name='dailyobserver')
+	e = DailyObserverExtractor(name='dailyobserver', debug=True)
 	
-	for num in xrange(1,20):
-		print e.cleaner(num=num)
-		print '--' * 100
+	print e.dir_cleaner(num=3)
+	print len(e.docs)
+	print e.__doc__
