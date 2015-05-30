@@ -10,8 +10,10 @@ Nathan Danielsen
 nathan.danielsen [at] gmail.com
 """
 
+import glob
 import os
 import sys  
+
 
 reload(sys)  
 sys.setdefaultencoding('utf8')
@@ -33,7 +35,7 @@ class DailyObserverExtractor(object):
 		self.name = name
 		self.num = num
 		self.data_dir = "data/" + self.name + "/"
-		self.docs_dir = os.listdir(self.data_dir)
+		self.docs = glob.glob(self.data_dir + '*.txt')
 		self.extractlist = []
 		self.hello = 'hello'
 
@@ -110,11 +112,14 @@ class DailyObserverExtractor(object):
 
 	def cleaner(self, num):
 
-		filename = self.docs_dir[num]
-		with open(self.data_dir + filename, 'r') as f:
-			self.soup = bs4.BeautifulSoup(f)
-			true_url, category, title, datetime, author, clean_content, image_url = self.contents_cleaner(self.soup)
-		return self.name, filename, true_url, category, title, datetime, author, clean_content, image_url
+		if num:
+			self.docs = self.docs[:num]
+
+		for filename in self.docs:
+			with open(filename, 'r') as f:
+				self.soup = bs4.BeautifulSoup(f)
+				true_url, category, title, datetime, author, clean_content, image_url = self.contents_cleaner(self.soup)
+			return self.name, filename, true_url, category, title, datetime, author, clean_content, image_url
 
 
 if __name__ == '__main__':
