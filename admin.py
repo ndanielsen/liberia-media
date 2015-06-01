@@ -7,9 +7,11 @@ author: Nathan Danielsen
 email: nathanjdanielsen@gmail.com
 """
 
+import pandas as pd
+
 from scrape.scrape_admin import Scraper_Admin 
 from engine.engine_admin import Engine_Admin, Engine_Content
-from clean.clean import DailyObserverExtractor
+from clean.clean import DailyObserverExtractor as DOE
 
 
 
@@ -57,11 +59,10 @@ if __name__ == "__main__":
 	
 	# test.main()
 
-	c = DailyObserverExtractor(name='dailyobserver')
+	e = DOE(name='dailyobserver')
 
+	daily_observer_cleaned = e.dir_cleaner()
+	df = pd.DataFrame(daily_observer_cleaned, columns=e.headers)
+	df[['author', 'clean_content']]
 
-	
-	for num in xrange(1, 5):
-		entry = c.cleaner(num=num)
-		# print '--' * 100
-		Engine_Content(engine='test', cleancontent=entry, debug=True)
+	df.to_pickle('data/cleaned_content.pickle')

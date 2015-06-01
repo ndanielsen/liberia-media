@@ -93,14 +93,22 @@ class DailyObserverExtractor(object):
 			author = author.strip()
 		except AttributeError:
 		 	author = None
+
 		try:
 			content_body = main_body.find(name='div', attrs={'class':"field field-name-body field-type-text-with-summary field-label-hidden"})
 			pset = content_body.findAll('p')
 			clean_content = ''
 			for p in pset:
-				p = p.text
-				p = p.replace(u'\xa0', u'')
-				clean_content += p + unicode("\n ") # to preserve where the natural paragraph lengths are for further analysis
+				if not author and p.text[:2] == u'By': 
+					author = p.text
+					author = author.replace('By:', '').replace('By', '')
+					author = self.emailremover(author)
+					author = self.whitespaceremover(author)
+					author = author.strip()
+				else:
+					p = p.text
+					p = p.replace(u'\xa0', u'')
+					clean_content += p + unicode("\n ") # to preserve where the natural paragraph lengths are for further analysis
 		except Exception:
 			clean_content = None
 		try:

@@ -118,8 +118,6 @@ class NLP(object):
 		st = NERTagger('/home/nathan/nltk_data/stanford-ner/classifiers/english.all.3class.distsim.crf.ser.gz',
 			'/home/nathan/nltk_data/stanford-ner/stanford-ner.jar', 'utf-8')
 
-		
-
 		body = self.text.strip('\n')
 		body = body.split()
 		entityName = ""
@@ -132,19 +130,12 @@ class NLP(object):
 			# 
 			# for entityName, entityType in st.tag(sentence.split()): #loop through text
 			# 	NER[entityType] = {}
-				
-
 			# 	print entityName, entityType
-				
-
+			
 			# 	NER[entityType][entityName] += 1 
-
-
-				
 				# entityMultiname = None
-
 				# print entityName, entityType
-				
+	
 
 				# if entityType == "O":
 				# 	continue
