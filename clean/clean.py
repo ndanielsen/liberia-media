@@ -95,7 +95,7 @@ class DailyObserverExtractor(object):
 			clean_content = ''
 			for p in pset:
 				p = p.text
-				p = p.replace(u'\xa0', u'')
+				p = p.replace(u'\xa0', u'')g
 				clean_content += p + unicode("\n ") # to preserve where the natural paragraph lengths are for further analysis
 		except Exception:
 			clean_content = None
